@@ -7,12 +7,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.unit.dp
 import com.ferreteriamapocho.data.UserPrefs
 import com.ferreteriamapocho.data.UserProfile
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountScreen() {
     val context = LocalContext.current
@@ -37,127 +38,138 @@ fun AccountScreen() {
         editMode = savedProfile.isEmpty
     }
 
-    Column(
-        Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        // Encabezado superior
-        Row(
-            Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text("Ferretería Mapocho", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-            if (!savedProfile.isEmpty) {
-                Text("Hola, ${savedProfile.name}", style = MaterialTheme.typography.titleMedium)
-            }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Ferretería Mapocho", fontWeight = FontWeight.Bold)
+                        if (!savedProfile.isEmpty)
+                            Text("Hola, ${savedProfile.name}")
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                )
+            )
         }
+    ) { innerPadding ->
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(16.dp)
+        ) {
+            Text(
+                if (savedProfile.isEmpty) "Registro de cliente" else "Mi cuenta",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(Modifier.height(16.dp))
 
-        Spacer(Modifier.height(20.dp))
-        Text(if (savedProfile.isEmpty) "Registro de cliente" else "Mi cuenta",
-            style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                label = { Text("Nombre") },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = editMode
+            )
+            Spacer(Modifier.height(8.dp))
 
-        Spacer(Modifier.height(16.dp))
+            OutlinedTextField(
+                value = lastName,
+                onValueChange = { lastName = it },
+                label = { Text("Apellido") },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = editMode
+            )
+            Spacer(Modifier.height(8.dp))
 
-        // Campos
-        OutlinedTextField(
-            value = name,
-            onValueChange = { name = it },
-            label = { Text("Nombre") },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = editMode
-        )
-        Spacer(Modifier.height(8.dp))
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("Correo electrónico") },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = editMode
+            )
+            Spacer(Modifier.height(8.dp))
 
-        OutlinedTextField(
-            value = lastName,
-            onValueChange = { lastName = it },
-            label = { Text("Apellido") },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = editMode
-        )
-        Spacer(Modifier.height(8.dp))
+            OutlinedTextField(
+                value = phone,
+                onValueChange = { phone = it },
+                label = { Text("Teléfono") },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = editMode
+            )
+            Spacer(Modifier.height(8.dp))
 
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Correo electrónico") },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = editMode
-        )
-        Spacer(Modifier.height(8.dp))
+            OutlinedTextField(
+                value = address,
+                onValueChange = { address = it },
+                label = { Text("Dirección") },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = editMode
+            )
+            Spacer(Modifier.height(8.dp))
 
-        OutlinedTextField(
-            value = phone,
-            onValueChange = { phone = it },
-            label = { Text("Teléfono") },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = editMode
-        )
-        Spacer(Modifier.height(8.dp))
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Contraseña") },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = editMode,
+                visualTransformation = PasswordVisualTransformation()
+            )
 
-        OutlinedTextField(
-            value = address,
-            onValueChange = { address = it },
-            label = { Text("Dirección") },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = editMode
-        )
-        Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(16.dp))
 
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Contraseña") },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = editMode,
-            visualTransformation = PasswordVisualTransformation()
-        )
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                if (editMode) {
+                    Button(
+                        onClick = {
+                            scope.launch {
+                                val profile = UserProfile(
+                                    name = name.trim(),
+                                    lastName = lastName.trim(),
+                                    email = email.trim(),
+                                    phone = phone.trim(),
+                                    address = address.trim(),
+                                    password = password.trim()
+                                )
+                                UserPrefs.save(context, profile)
+                                editMode = false
+                            }
+                        },
+                        enabled = name.isNotBlank() && lastName.isNotBlank() && email.isNotBlank() && password.isNotBlank()
+                    ) {
+                        Text(if (savedProfile.isEmpty) "Registrarse" else "Guardar cambios")
+                    }
 
-        Spacer(Modifier.height(16.dp))
-
-        // Botones
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            if (editMode) {
-                Button(
-                    onClick = {
-                        scope.launch {
-                            val profile = UserProfile(
-                                name = name.trim(),
-                                lastName = lastName.trim(),
-                                email = email.trim(),
-                                phone = phone.trim(),
-                                address = address.trim(),
-                                password = password.trim()
-                            )
-                            UserPrefs.save(context, profile)
-                            editMode = false
-                        }
-                    },
-                    enabled = name.isNotBlank() && lastName.isNotBlank() && email.isNotBlank() && password.isNotBlank()
-                ) {
-                    Text(if (savedProfile.isEmpty) "Registrarse" else "Guardar cambios")
-                }
-                OutlinedButton(onClick = {
-                    name = savedProfile.name
-                    lastName = savedProfile.lastName
-                    email = savedProfile.email
-                    phone = savedProfile.phone
-                    address = savedProfile.address
-                    password = savedProfile.password
-                    editMode = false
-                }) {
-                    Text("Cancelar")
-                }
-            } else {
-                OutlinedButton(onClick = { editMode = true }) {
-                    Text("Editar")
-                }
-                OutlinedButton(onClick = {
-                    scope.launch { UserPrefs.clear(context) }
-                }) {
-                    Text("Borrar cuenta")
+                    OutlinedButton(onClick = {
+                        name = savedProfile.name
+                        lastName = savedProfile.lastName
+                        email = savedProfile.email
+                        phone = savedProfile.phone
+                        address = savedProfile.address
+                        password = savedProfile.password
+                        editMode = false
+                    }) {
+                        Text("Cancelar")
+                    }
+                } else {
+                    OutlinedButton(onClick = { editMode = true }) {
+                        Text("Editar")
+                    }
+                    OutlinedButton(onClick = {
+                        scope.launch { UserPrefs.clear(context) }
+                    }) {
+                        Text("Borrar cuenta")
+                    }
                 }
             }
         }
