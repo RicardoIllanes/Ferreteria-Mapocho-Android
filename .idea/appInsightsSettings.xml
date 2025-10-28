@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.ferreteriamapocho" />
+                  <option name="mobileSdkAppId" value="1:986895022267:android:6a6a899d802621c0d5919e" />
+                  <option name="projectId" value="ferreteria-d3107" />
+                  <option name="projectNumber" value="986895022267" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

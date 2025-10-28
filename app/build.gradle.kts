@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id("org.jetbrains.kotlin.plugin.compose")
     id("kotlin-kapt")
+    id("com.google.gms.google-services") version "4.4.4" apply false
 }
 
 android {
@@ -53,4 +54,6 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
+    implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
+    implementation("com.google.firebase:firebase-analytics")
 }
