@@ -80,7 +80,7 @@ fun CatalogScreen(navController: NavHostController) {
                                     CartManager.addToCart(product)
                                     scope.launch {
                                         snackbarHostState.showSnackbar(
-                                            message = "${product.name} agregado al carrito ✅",
+                                            message = "${product.name} agregado al carrito",
                                             withDismissAction = true
                                         )
                                     }
